@@ -2,10 +2,17 @@
     <div>
         <button v-on:click="playPause">{{buttonText}}</button>
         <p>{{ parseInt(seekPosition) }} / {{ parseInt(songDuration) }}</p>
-        <div class="progress">
+        <div
+            class="progress"
+            v-on:click="seekManual"
+        >
             <div 
                 v-bind:style="{ width: seekPercentage + '%' }"
-                class="progress-bar" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                v-bind:aria-valuenow="seekPercentage"
+                class="progress-bar"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
             ></div>
         </div>
     </div>
@@ -46,6 +53,11 @@ export default {
         performAnimation: function() {
             this.seekbarAnimRequest = requestAnimationFrame(this.performAnimation)
             this.seekPosition = this.currentTrack.seek();
+        },
+        seekManual: function(event) {
+            let seekPercentage = event.offsetX / event.target.clientWidth;
+            this.seekPosition = this.currentTrack.duration() * seekPercentage;
+            this.currentTrack.seek(this.seekPosition);
         }
     },
     watch: {
@@ -74,7 +86,13 @@ export default {
 </script>
 
 <style>
+.progress {
+    max-width: 400px;
+    margin: 0 auto;
+    cursor: pointer;
+}
 .progress-bar {
     transition: none !important;
+    pointer-events: none;
 }
 </style>
