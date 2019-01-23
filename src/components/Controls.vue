@@ -99,6 +99,9 @@ export default {
             this.isPlaying = false;
             this.seekPosition = 0;
             this.currentTrack.stop();
+        },
+        onTrackEnd: function() {
+            this.nextTrack();
         }
     },
     watch: {
@@ -121,9 +124,9 @@ export default {
             if (this.currentTrack && isPlaying) {
                 this.currentTrack.stop();
             }
-            console.log(this.currentQueueItem);
             this.currentTrack = new Howl({
-                src: [this.playlist[this.currentQueueItem]]
+                src: [this.playlist[this.currentQueueItem]],
+                onend: this.onTrackEnd
             });
             if (isPlaying) {
                 this.currentTrack.play();
