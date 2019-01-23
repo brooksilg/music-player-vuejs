@@ -1,7 +1,7 @@
 <template>
     <div>
         <button v-on:click="playPause">{{buttonText}}</button>
-        <p>{{ parseInt(seekPosition) }} / {{ parseInt(songDuration) }}</p>
+        <p>{{ secondsToHHMMSS(seekPosition) }} / {{ secondsToHHMMSS(songDuration) }}</p>
         <div
             class="progress"
             v-on:click="seekManual"
@@ -20,6 +20,7 @@
 
 <script>
 import {Howl} from 'howler';
+import timeFormatter from '../mixins/timeFormatter.js';
 
 export default {
     name: 'Controls',
@@ -32,6 +33,7 @@ export default {
             seekbarAnimRequest: null
         }
     },
+    mixins: [timeFormatter],
     computed: {
         songDuration: function() {
             if (this.currentTrack) {
