@@ -1,6 +1,17 @@
 <template>
     <div>
-        <button v-on:click="playPause">{{buttonText}}</button>
+        <div>Track {{ this.currentQueueItem + 1 }} / {{ this.playlist.length }}:</div>
+        <button v-on:click="prevTrack">Previous</button>
+        <button v-on:click="stopClicked">Stop</button>
+        <button v-on:click="playPauseClicked">
+            <template v-if="isPlaying">
+                Pause
+            </template>
+            <template v-else>
+                Play
+            </template>
+        </button>
+        <button v-on:click="nextTrack">Next</button>
         <p>{{ secondsToHHMMSS(seekPosition) }} / {{ secondsToHHMMSS(songDuration) }}</p>
         <div
             class="progress"
@@ -30,7 +41,12 @@ export default {
             buttonText: 'Play',
             currentTrack: null,
             seekPosition: 0,
-            seekbarAnimRequest: null
+            seekbarAnimRequest: null,
+            currentQueueItem: null,
+            playlist:  [
+                './mp3/sample-01.mp3',
+                './mp3/sample-02.mp3'
+            ]
         }
     },
     mixins: [timeFormatter],
@@ -49,7 +65,7 @@ export default {
         }
     },
     methods: {
-        playPause: function() {
+        playPauseClicked: function() {
             this.isPlaying = ! this.isPlaying;
         },
         performAnimation: function() {
@@ -60,6 +76,29 @@ export default {
             let seekPercentage = event.offsetX / event.target.clientWidth;
             this.seekPosition = this.currentTrack.duration() * seekPercentage;
             this.currentTrack.seek(this.seekPosition);
+        },
+        nextTrack: function() {
+            // handle repeat-all, repeat-one, and shuffle
+            if ((this.currentQueueItem + 1) >= this.playlist.length) {
+                // assume repeat-all for now
+                this.currentQueueItem = 0;
+            } else {
+                this.currentQueueItem++;
+            }
+        },
+        prevTrack: function() {
+            // handle repeat-all, repeat-one, and shuffle
+            if ((this.currentQueueItem - 1) < 0) {
+                // assume repeat-all for now
+                this.currentQueueItem = this.playlist.length - 1;
+            } else {
+                this.currentQueueItem--;
+            }
+        },
+        stopClicked: function() {
+            this.isPlaying = false;
+            this.seekPosition = 0;
+            this.currentTrack.stop();
         }
     },
     watch: {
@@ -76,18 +115,44 @@ export default {
                 //stop the animation
                 cancelAnimationFrame(this.seekbarAnimRequest);
             }
+        },
+        currentQueueItem: function(val, oldVal) {
+            let isPlaying = this.isPlaying;
+            if (this.currentTrack && isPlaying) {
+                this.currentTrack.stop();
+            }
+            console.log(this.currentQueueItem);
+            this.currentTrack = new Howl({
+                src: [this.playlist[this.currentQueueItem]]
+            });
+            if (isPlaying) {
+                this.currentTrack.play();
+            }
         }
     },
     mounted: function() {
         // Setup the new Howl.
-        this.currentTrack = new Howl({
-            src: ['./mp3/sample.mp3']
-        });
+        if (this.playlist.length) {
+            if (this.currentQueueItem == null) {
+                this.currentQueueItem = 0;
+            }
+            // this.currentTrack = new Howl({
+            //     src: [this.playlist[this.currentQueueItem]]
+            // });
+        } else {
+            // playlist is empty
+        }
     }
 }
 </script>
 
 <style>
+button {
+    min-width: 5em;
+}
+button + button {
+    margin-left: 2px;
+}
 .progress {
     max-width: 400px;
     margin: 0 auto;
