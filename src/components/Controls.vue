@@ -38,7 +38,6 @@ export default {
     data: function() {
         return {
             isPlaying: false,
-            buttonText: 'Play',
             currentTrack: null,
             seekPosition: 0,
             seekbarAnimRequest: null,
