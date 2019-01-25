@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="controls">
         <div>Track {{ this.currentQueueItem + 1 }} / {{ this.playlist.length }}:</div>
         <button v-on:click="prevTrack">Previous</button>
         <button v-on:click="stopClicked">Stop</button>
@@ -149,6 +149,9 @@ export default {
 </script>
 
 <style>
+#controls {
+    text-align: center;
+}
 button {
     min-width: 5em;
 }
