@@ -21,4 +21,5 @@ yarn-error.log*
 *.sw*
 
 # Project specific
-*.mp3
+/public/library
+/public/mp3
