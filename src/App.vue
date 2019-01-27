@@ -20,9 +20,6 @@ import Library from './components/Library.vue'
 import PlaylistPane from './components/PlaylistPane.vue'
 import Controls from './components/Controls.vue'
 
-console.log(Multipane);
-console.log(Library);
-
 export default {
   name: 'app',
   components: {

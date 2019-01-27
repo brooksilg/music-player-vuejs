@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { mapState, mapGetters, mapMutations } from 'vuex';
 import {Howl} from 'howler';
 import timeFormatter from '../mixins/timeFormatter.js';
 
@@ -50,18 +51,22 @@ export default {
     },
     mixins: [timeFormatter],
     computed: {
-        songDuration: function() {
-            if (this.currentTrack) {
-                return this.currentTrack.duration();
-            }
-        },
         seekPercentage: function() {
             // if (this.trackIsLoaded) {
                 return 100 * this.seekPosition / this.songDuration;
             // } else {
                 // return 0;
             // }
-        }
+        },
+        ...mapState([
+            
+        ]),
+        ...mapGetters([
+            'songDuration'
+        ]),
+        ...mapMutations({
+            setTrack: 'setPlayerCurrentTrackByID'
+        })
     },
     methods: {
         playPauseClicked: function() {
@@ -118,7 +123,7 @@ export default {
                 cancelAnimationFrame(this.seekbarAnimRequest);
             }
         },
-        currentQueueItem: function(val, oldVal) {
+        currentQueueItem: function() {
             let isPlaying = this.isPlaying;
             if (this.currentTrack && isPlaying) {
                 this.currentTrack.stop();

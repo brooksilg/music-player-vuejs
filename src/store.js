@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { } from './config/mutation-types.js'
 
 Vue.use(Vuex)
 
@@ -17,7 +18,7 @@ export default new Vuex.Store({
 				'u9flgw0ict',
 				'bptbofjw96',
 			],
-			current_track: null,
+			currentTrack: null, // ID of current track
 		},
 		playlists: [
 			{
@@ -52,7 +53,7 @@ export default new Vuex.Store({
 		library: {
 			// TODO: Investigate using a hash (crc? md5?) as identifier for now
 			'12gph7xe6p' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "Miseria Cantare- The Beginning",
@@ -61,7 +62,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/01 - Miseria Cantare- The Beginning.mp3"
 			},
 			'kpvpf8wx0f' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "The Leaving Song Pt. II",
@@ -70,7 +71,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/02 - The Leaving Song Pt. II.mp3"
 			},
 			'oyua3woaet' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "Bleed Black",
@@ -79,7 +80,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/03 - Bleed Black.mp3"
 			},
 			'uqds9uih0r' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "Silver and Cold",
@@ -88,7 +89,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/04 - Silver and Cold.mp3"
 			},
 			'w4k5m9woo4' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "Dancing Through Sunday",
@@ -97,7 +98,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/05 - Dancing Through Sunday.mp3"
 			},
 			'mr7mcde5nh' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "Girl's Not Grey",
@@ -106,7 +107,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/06 - Girl's Not Grey.mp3"
 			},
 			'kdcv9uw94f' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "Death of Seasons",
@@ -115,7 +116,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/07 - Death of Seasons.mp3"
 			},
 			'3nzxj6v42f' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "The Great Disappointment",
@@ -124,7 +125,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/08 - The Great Disappointment.mp3"
 			},
 			'4a0jxz2lmz' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "Paper Airplanes (makeshift wings)",
@@ -133,7 +134,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/09 - Paper Airplanes (makeshift wings).mp3"
 			},
 			'iekveo600k' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "This Celluloid Dream",
@@ -142,7 +143,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/10 - This Celluloid Dream.mp3"
 			},
 			'nn4x9pmdv7' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "The Leaving Song",
@@ -151,7 +152,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/11 - The Leaving Song.mp3"
 			},
 			'm4n71ndakx' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "…But Home Is Nowhere",
@@ -160,7 +161,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/12 - …But Home Is Nowhere.mp3"
 			},
 			'blrqyko76c' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "Synthesthesia",
@@ -169,7 +170,7 @@ export default new Vuex.Store({
 				filepath: "./library/AFI - Sing The Sorrow (2003) [V0]/13 - Synthesthesia.mp3"
 			},
 			's8tdzxycb2' : {
-				tag_meta: {
+				tags: {
 					artist: "AFI",
 					album: "Sing The Sorrow",
 					title: "Now the World",
@@ -240,9 +241,23 @@ export default new Vuex.Store({
 		}
 	},
 	mutations: {
-		
+		setPlayerCurrentTrackByID (state, payload) {
+			state.player.current = state.library[payload.id]
+		},
+		setPlayerPreloadTrackByID (state, payload) {
+			state.player.preload = state.library[payload.id]
+		}
 	},
 	actions: {
 		
+	},
+	getters: {
+		songDuration: state => {
+            if (state.player.currentTrack) {
+                return state.player.currentTrack.duration();
+            } else {
+                return 0
+            }
+        },
 	}
 })
