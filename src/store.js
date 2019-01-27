@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { } from './config/mutation-types.js'
+import Player from './api/player.js'
 
 Vue.use(Vuex)
 
@@ -9,6 +10,7 @@ export default new Vuex.Store({
 		player: {
 			current: null, // currently loaded/playing track - Howl instance
 			preload: null, // pre-load next track for gapless playback support
+			isPlaying: false,
 		},
 		queue: {
 			tracklist: [
@@ -18,7 +20,7 @@ export default new Vuex.Store({
 				'u9flgw0ict',
 				'bptbofjw96',
 			],
-			currentTrack: null, // ID of current track
+			currentTrack: null, // index of current track in queue.tracklist
 		},
 		playlists: [
 			{
@@ -241,11 +243,26 @@ export default new Vuex.Store({
 		}
 	},
 	mutations: {
-		setPlayerCurrentTrackByID (state, payload) {
-			state.player.current = state.library[payload.id]
+		setPlayerCurrentTrack (state, payload) {
+			if (payload.id) {
+				state.player.current = Player.create({
+					filepath: state.library[payload.id].filepath,
+					// need a way to add support for Howl's 'onend' callback
+				})
+			} else if (payload.filepath) {
+				state.player.current = Player.create({
+					filepath: payload.filepath
+				})
+			} else {
+				console.error('Track ID required');
+			}
 		},
-		setPlayerPreloadTrackByID (state, payload) {
-			state.player.preload = state.library[payload.id]
+		setPlayerPreloadTrack (state, payload) {
+			if (payload.id) {
+				state.player.preload = state.library[payload.id]
+			} else {
+				console.error('Track ID required');
+			}
 		}
 	},
 	actions: {

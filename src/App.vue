@@ -10,6 +10,7 @@
       </div>
     </multipane>
     <Controls />
+    <Queue />
   </div>
 </template>
 
@@ -19,6 +20,7 @@ import { Multipane, MultipaneResizer } from 'vue-multipane'
 import Library from './components/Library.vue'
 import PlaylistPane from './components/PlaylistPane.vue'
 import Controls from './components/Controls.vue'
+import Queue from './components/Queue.vue'
 
 export default {
   name: 'app',
@@ -27,7 +29,8 @@ export default {
     "multipane-resizer": MultipaneResizer,
     Library,
     PlaylistPane,
-    Controls
+    Controls,
+    Queue
   },
 }
 </script>

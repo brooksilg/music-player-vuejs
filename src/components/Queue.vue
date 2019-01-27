@@ -1,5 +1,5 @@
 <template>
-    <h1>Queue:</h1>
+    <h2>Queue:</h2>
 </template>
 
 <script>

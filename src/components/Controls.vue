@@ -112,12 +112,10 @@ export default {
         isPlaying: function () {
             if (this.isPlaying) {
                 this.currentTrack.play();
-                this.buttonText = "Pause";
 
                 requestAnimationFrame(this.performAnimation);
             } else {
                 this.currentTrack.pause();
-                this.buttonText = "Play";
 
                 //stop the animation
                 cancelAnimationFrame(this.seekbarAnimRequest);
