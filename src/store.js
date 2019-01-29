@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { } from './config/mutation-types.js'
+import {Howl} from 'howler';
 import Player from './api/player.js'
 
 Vue.use(Vuex)
@@ -245,14 +246,15 @@ export default new Vuex.Store({
 	mutations: {
 		setPlayerCurrentTrack (state, payload) {
 			if (payload.id) {
-				state.player.current = Player.create({
-					filepath: state.library[payload.id].filepath,
-					// need a way to add support for Howl's 'onend' callback
-				})
+				state.player.current = new Howl({
+					src: state.library[payload.id].filepath,
+					// onend: this.onTrackEnd
+				});
 			} else if (payload.filepath) {
-				state.player.current = Player.create({
-					filepath: payload.filepath
-				})
+				state.player.current = new Howl({
+					src: payload.filepath,
+					// onend: this.onTrackEnd
+				});
 			} else {
 				console.error('Track ID required');
 			}
@@ -262,6 +264,15 @@ export default new Vuex.Store({
 				state.player.preload = state.library[payload.id]
 			} else {
 				console.error('Track ID required');
+			}
+		},
+		controlsNextTrack (state, payload) {
+			// handle repeat-all, repeat-one, and shuffle
+			if ((state.queue.currentTrack + 1) >= this.playlist.length) {
+				// assume repeat-all for now
+				this.currentQueueItem = 0;
+			} else {
+				this.currentQueueItem++;
 			}
 		}
 	},
