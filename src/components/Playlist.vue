@@ -1,5 +1,8 @@
 <template>
-    <h2>Playlist</h2>
+    <div class="playlist">
+        {{ playlist.name }}
+        <h2>Playlist</h2>
+    </div>
 </template>
 
 <script>

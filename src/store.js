@@ -12,7 +12,7 @@ export default new Vuex.Store({
 			current: {
 				track: null, // currently loaded/playing track - Howl instance
 				playlist: 0, // set to first (default) playlist
-				track: null, // index of current track in current.playlist
+				playlistTrack: null, // index of current track in current.playlist
 			},
 			preload: null, // pre-load next track for gapless playback support
 			isPlaying: false,
@@ -28,35 +28,48 @@ export default new Vuex.Store({
 			],
 			currentTrack: null, // index of current track in queue.tracklist
 		},
-		playlists: {
-			playlistList: [
-				{
-					name: "default",
-					tracklist: [
-						'm76v0dvgk6',
-						'u9flgw0ict',
-						'i9ezo6cfai',
-						'wzb0uo1hfu',
-						'141773f5uk',
-						'arj0pqsela',
-						'kg1j1jmayr',
-						'bptbofjw96',
-						'2ia9qssyy5',
-						'i4xjiob1ku',
-						'n4r31cehbt',
-						'x34u08u9kq',
-						't09ufb80g3',
-						'bt8fvzr9s5',
-						'zt2shpp32r',
-						'gp0ua7owkk',
-						'2a84ko9svv',
-						'7yhqnn2mdb',
-						'd73ovaqsgj',
-						'87tk7jtxq4',
-					],
-				}
-			],
-		},
+		playlists: [
+			{
+				name: "default",
+				tracklist: [
+					'm76v0dvgk6',
+					'u9flgw0ict',
+					'i9ezo6cfai',
+					'wzb0uo1hfu',
+					'141773f5uk',
+					'arj0pqsela',
+					'kg1j1jmayr',
+					'bptbofjw96',
+					'2ia9qssyy5',
+					'i4xjiob1ku',
+					'n4r31cehbt',
+					'x34u08u9kq',
+					't09ufb80g3',
+					'bt8fvzr9s5',
+					'zt2shpp32r',
+					'gp0ua7owkk',
+					'2a84ko9svv',
+					'7yhqnn2mdb',
+					'd73ovaqsgj',
+					'87tk7jtxq4',
+				],
+			},
+			{
+				name: "My Cool Playlist",
+				tracklist: [
+					'kg1j1jmayr',
+					'bptbofjw96',
+					'2ia9qssyy5',
+					'i4xjiob1ku',
+					'n4r31cehbt',
+					'x34u08u9kq',
+					'2a84ko9svv',
+					'7yhqnn2mdb',
+					'd73ovaqsgj',
+					'87tk7jtxq4',
+				],
+			}
+		],
 		ui: {
 			
 		},
@@ -282,7 +295,7 @@ export default new Vuex.Store({
 				// set current
 				state.player.current.track = state.player.preload;
 				state.player.preload = setPlayerPreloadTrack(state, {
-					id: asdf,
+					id: "asdf",
 				});
 
 				// stop (now) previous track
