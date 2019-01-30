@@ -9,9 +9,14 @@ Vue.use(Vuex)
 export default new Vuex.Store({
 	state: {
 		player: {
-			current: null, // currently loaded/playing track - Howl instance
+			current: {
+				track: null, // currently loaded/playing track - Howl instance
+				playlist: 0, // set to first (default) playlist
+				track: null, // index of current track in current.playlist
+			},
 			preload: null, // pre-load next track for gapless playback support
 			isPlaying: false,
+			usePreload: true,
 		},
 		queue: {
 			tracklist: [
@@ -23,33 +28,35 @@ export default new Vuex.Store({
 			],
 			currentTrack: null, // index of current track in queue.tracklist
 		},
-		playlists: [
-			{
-				name: "default",
-				tracklist: [
-					'm76v0dvgk6',
-					'u9flgw0ict',
-					'i9ezo6cfai',
-					'wzb0uo1hfu',
-					'141773f5uk',
-					'arj0pqsela',
-					'kg1j1jmayr',
-					'bptbofjw96',
-					'2ia9qssyy5',
-					'i4xjiob1ku',
-					'n4r31cehbt',
-					'x34u08u9kq',
-					't09ufb80g3',
-					'bt8fvzr9s5',
-					'zt2shpp32r',
-					'gp0ua7owkk',
-					'2a84ko9svv',
-					'7yhqnn2mdb',
-					'd73ovaqsgj',
-					'87tk7jtxq4',
-				],
-			}
-		],
+		playlists: {
+			playlistList: [
+				{
+					name: "default",
+					tracklist: [
+						'm76v0dvgk6',
+						'u9flgw0ict',
+						'i9ezo6cfai',
+						'wzb0uo1hfu',
+						'141773f5uk',
+						'arj0pqsela',
+						'kg1j1jmayr',
+						'bptbofjw96',
+						'2ia9qssyy5',
+						'i4xjiob1ku',
+						'n4r31cehbt',
+						'x34u08u9kq',
+						't09ufb80g3',
+						'bt8fvzr9s5',
+						'zt2shpp32r',
+						'gp0ua7owkk',
+						'2a84ko9svv',
+						'7yhqnn2mdb',
+						'd73ovaqsgj',
+						'87tk7jtxq4',
+					],
+				}
+			],
+		},
 		ui: {
 			
 		},
@@ -246,12 +253,12 @@ export default new Vuex.Store({
 	mutations: {
 		setPlayerCurrentTrack (state, payload) {
 			if (payload.id) {
-				state.player.current = new Howl({
+				state.player.current.track = new Howl({
 					src: state.library[payload.id].filepath,
 					// onend: this.onTrackEnd
 				});
 			} else if (payload.filepath) {
-				state.player.current = new Howl({
+				state.player.current.track = new Howl({
 					src: payload.filepath,
 					// onend: this.onTrackEnd
 				});
@@ -266,14 +273,27 @@ export default new Vuex.Store({
 				console.error('Track ID required');
 			}
 		},
-		controlsNextTrack (state, payload) {
+		controlsNextTrack (state) {
 			// handle repeat-all, repeat-one, and shuffle
-			if ((state.queue.currentTrack + 1) >= this.playlist.length) {
-				// assume repeat-all for now
-				this.currentQueueItem = 0;
-			} else {
-				this.currentQueueItem++;
+			if (state.usePreload && state.player.preload) {
+				let playingTrack = state.player.current.track;
+				state.player.preload.play();
+
+				// set current
+				state.player.current.track = state.player.preload;
+				state.player.preload = setPlayerPreloadTrack(state, {
+					id: asdf,
+				});
+
+				// stop (now) previous track
+				playingTrack.stop();
 			}
+			// if ((state.queue.currentTrack + 1) >= this.playlist.length) {
+			// 	// assume repeat-all for now
+			// 	this.currentQueueItem = 0;
+			// } else {
+			// 	this.currentQueueItem++;
+			// }
 		}
 	},
 	actions: {
