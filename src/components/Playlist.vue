@@ -1,17 +1,28 @@
 <template>
     <div class="playlist">
-        {{ playlist.name }}
-        <h2>Playlist</h2>
+        <div
+            v-for="(track_id, track_index) in this.playlist.tracklist"
+            v-bind:key="track_index"
+            v-on:click="selectTrack(track_index)"
+        >
+            {{ track_id }}
+        </div>
     </div>
 </template>
 
 <script>
 export default {
     name: 'Playlist',
+    props: ['playlist'],
     data: function() {
         return {
             // data
         }
     },
+    methods: {
+        selectTrack: function() {
+
+        }
+    }
 }
 </script>

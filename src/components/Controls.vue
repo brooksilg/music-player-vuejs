@@ -63,10 +63,7 @@ export default {
         ]),
         ...mapGetters([
             'songDuration'
-        ]),
-        ...mapMutations({
-            setTrack: 'setPlayerCurrentTrackByID'
-        })
+        ])
     },
     methods: {
         playPauseClicked: function() {
@@ -106,7 +103,10 @@ export default {
         },
         onTrackEnd: function() {
             this.nextTrack();
-        }
+        },
+        ...mapMutations({
+            setTrack: 'setPlayerCurrentTrackByID'
+        })
     },
     watch: {
         isPlaying: function () {

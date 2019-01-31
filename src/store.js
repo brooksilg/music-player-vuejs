@@ -8,6 +8,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
+		ui: {
+			selectedPlaylist: 0,
+		},
 		player: {
 			current: {
 				track: null, // currently loaded/playing track - Howl instance
@@ -70,9 +73,6 @@ export default new Vuex.Store({
 				],
 			}
 		],
-		ui: {
-			
-		},
 		library: {
 			// TODO: Investigate using a hash (crc? md5?) as identifier for now
 			'12gph7xe6p' : {
@@ -307,6 +307,9 @@ export default new Vuex.Store({
 			// } else {
 			// 	this.currentQueueItem++;
 			// }
+		},
+		setUICurrentPlaylist(state, payload) {
+			state.ui.selectedPlaylist = payload.playlist_id;
 		}
 	},
 	actions: {
