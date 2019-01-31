@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex';
+
 export default {
     name: 'Playlist',
     props: ['playlist'],

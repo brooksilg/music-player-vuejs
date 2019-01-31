@@ -21,16 +21,6 @@ export default new Vuex.Store({
 			isPlaying: false,
 			usePreload: true,
 		},
-		queue: {
-			tracklist: [
-				'oyua3woaet',
-				'4a0jxz2lmz',
-				'm76v0dvgk6',
-				'u9flgw0ict',
-				'bptbofjw96',
-			],
-			currentTrack: null, // index of current track in queue.tracklist
-		},
 		playlists: [
 			{
 				name: "default",
