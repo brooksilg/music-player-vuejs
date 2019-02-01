@@ -54,7 +54,6 @@ export default {
         })
     },
     computed: mapState([
-        // map this.count to store.state.count
         'playlists',
         'player',
         'ui',

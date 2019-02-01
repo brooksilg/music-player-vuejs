@@ -5,7 +5,7 @@
             v-bind:key="track_index"
             v-on:click="selectTrack(track_index)"
         >
-            {{ track_id }}
+            {{ getTrackTitle(track_id) }}
         </div>
     </div>
 </template>
@@ -21,10 +21,25 @@ export default {
             // data
         }
     },
+    computed: {
+        ...mapState([
+            'library',
+        ])
+    },
     methods: {
         selectTrack: function() {
 
-        }
+        },
+        getTrackTitle(track_id) {
+            if (this.library[track_id].tags) {
+                return this.library[track_id].tags.title;
+            } else {
+                return this.library[track_id].filepath;
+            }
+        },
+    },
+    mounted: function() {
+        
     }
 }
 </script>
