@@ -14,7 +14,7 @@ export default new Vuex.Store({
 		player: {
 			current: {
 				track: null, // currently loaded/playing track - Howl instance
-				playlist: 0, // set to first (default) playlist
+				playlist: '01', // set to first (default) playlist
 				playlistTrack: null, // index of current track in current.playlist
 			},
 			preload: null, // pre-load next track for gapless playback support
@@ -23,7 +23,8 @@ export default new Vuex.Store({
 		},
 		playlists: [
 			{
-				name: "default",
+				id: "00",
+				name: "Default",
 				tracklist: [
 					'12gph7xe6p',
 					'kpvpf8wx0f',
@@ -39,23 +40,11 @@ export default new Vuex.Store({
 					'm4n71ndakx',
 					'blrqyko76c',
 					's8tdzxycb2',
-					'bptbofjw96',
-					'2ia9qssyy5',
-					'i4xjiob1ku',
-					'n4r31cehbt',
-					'x34u08u9kq',
-					't09ufb80g3',
-					'bt8fvzr9s5',
-					'zt2shpp32r',
-					'gp0ua7owkk',
-					'2a84ko9svv',
-					'7yhqnn2mdb',
-					'd73ovaqsgj',
-					'87tk7jtxq4',
 				],
 			},
 			{
-				name: "My Cool Playlist",
+				id: "01",
+				name: "Another Playlist",
 				tracklist: [
 					'kg1j1jmayr',
 					'bptbofjw96',
@@ -262,9 +251,9 @@ export default new Vuex.Store({
 	},
 	mutations: {
 		setPlayerCurrentTrack (state, payload) {
-			if (payload.id) {
+			if (payload.track_id) {
 				state.player.current.track = new Howl({
-					src: state.library[payload.id].filepath,
+					src: state.library[payload.track_id].filepath,
 					// onend: this.onTrackEnd
 				});
 			} else if (payload.filepath) {
@@ -275,10 +264,18 @@ export default new Vuex.Store({
 			} else {
 				console.error('Track ID required');
 			}
+
+			if (payload.playlist) {
+				state.player.current.playlist = payload.playlist;
+			}
+
+			if (payload.playlistTrack) {
+				state.player.current.playlistTrack = payload.playlistTrack;
+			}
 		},
 		setPlayerPreloadTrack (state, payload) {
-			if (payload.id) {
-				state.player.preload = state.library[payload.id]
+			if (payload.track_id) {
+				state.player.preload = state.library[payload.track_id]
 			} else {
 				console.error('Track ID required');
 			}

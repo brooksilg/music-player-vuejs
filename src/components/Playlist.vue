@@ -29,7 +29,9 @@ export default {
     methods: {
         selectTrack: function(track_index) {
             this.setTrack({
-                id: this.playlist.tracklist[track_index]
+                track_id: this.playlist.tracklist[track_index],
+                playlist: this.playlist.id,
+                playlistTrack: track_index
             });
         },
         getTrackTitle(track_id) {
