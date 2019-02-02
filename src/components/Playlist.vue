@@ -27,8 +27,8 @@ export default {
         ])
     },
     methods: {
-        selectTrack: function() {
-
+        selectTrack: function(track_id) {
+            
         },
         getTrackTitle(track_id) {
             if (this.library[track_id].tags) {
@@ -37,6 +37,9 @@ export default {
                 return this.library[track_id].filepath;
             }
         },
+        ...mapMutations({
+            setTrack: 'setPlayerCurrentTrack'
+        })
     },
     mounted: function() {
         

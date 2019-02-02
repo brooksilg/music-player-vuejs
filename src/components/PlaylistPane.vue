@@ -1,27 +1,30 @@
 <template>
     <div>
         <h2>Playlists</h2>
-        <div class="tabs">
-            <div
-                v-for="(playlist, playlist_id) in this.playlists"
+        <div class="ui top attached tabular menu">
+            <div v-for="(playlist, playlist_id) in this.playlists"
                 v-bind:key="playlist_id"
                 v-on:click="onClickPlaylist(playlist_id)"
+                v-bind:class="{
+                    active: isSelectedPlaylist(playlist_id),
+                    item: true
+                }"
             >
                 {{ playlist.name }}
             </div>
         </div>
-        <div class="pane">
-            <div
-                v-bind:key="playlist_id"
-                v-for="(playlist, playlist_id) in this.playlists"
+        <template v-for="(playlist, playlist_id) in this.playlists">
+            <div v-bind:key="playlist_id"
+                v-if="isSelectedPlaylist(playlist_id)"
+                class="ui bottom attached active tab segment"
             >
-                <template v-if="isSelectedPlaylist(playlist_id)">
+                <template>
                     <Playlist
                         v-bind:playlist="playlist"
                     />
                 </template>
             </div>
-        </div>
+        </template>
     </div>
 </template>
 

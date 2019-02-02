@@ -105,7 +105,7 @@ export default {
             this.nextTrack();
         },
         ...mapMutations({
-            setTrack: 'setPlayerCurrentTrackByID'
+            setTrack: 'setPlayerCurrentTrack'
         })
     },
     watch: {
