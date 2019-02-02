@@ -27,8 +27,10 @@ export default {
         ])
     },
     methods: {
-        selectTrack: function(track_id) {
-            
+        selectTrack: function(track_index) {
+            this.setTrack({
+                id: this.playlist.tracklist[track_index]
+            });
         },
         getTrackTitle(track_id) {
             if (this.library[track_id].tags) {
