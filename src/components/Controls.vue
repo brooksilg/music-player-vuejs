@@ -1,10 +1,10 @@
 <template>
     <div id="controls">
-        <div>Track {{ this.currentQueueItem + 1 }} / {{ this.playlist.length }}:</div>
+        <div>Track {{ this.player.current.playlistTrack + 1 }} / {{ this.playlists[this.player.current.playlist].tracklist.length }}:</div>
         <button v-on:click="prevTrack">Previous</button>
         <button v-on:click="stopClicked">Stop</button>
         <button v-on:click="playPauseClicked">
-            <template v-if="isPlaying">
+            <template v-if="this.player.isPlaying">
                 Pause
             </template>
             <template v-else>
@@ -38,15 +38,8 @@ export default {
     name: 'Controls',
     data: function() {
         return {
-            isPlaying: false,
-            currentTrack: null,
             seekPosition: 0,
             seekbarAnimRequest: null,
-            currentQueueItem: null,
-            playlist:  [
-                './mp3/sample-01.mp3',
-                './mp3/sample-02.mp3'
-            ]
         }
     },
     mixins: [timeFormatter],
@@ -59,7 +52,9 @@ export default {
             // }
         },
         ...mapState([
-            
+            'player',
+            'playlists',
+            'library'
         ]),
         ...mapGetters([
             'songDuration'
@@ -67,86 +62,84 @@ export default {
     },
     methods: {
         playPauseClicked: function() {
-            this.isPlaying = ! this.isPlaying;
+            if (this.player.isPlaying) {
+                this.controlsPause();
+            } else {
+                this.controlsPlay();
+            }
         },
         performAnimation: function() {
             this.seekbarAnimRequest = requestAnimationFrame(this.performAnimation)
-            this.seekPosition = this.currentTrack.seek();
+            this.seekPosition = this.player.current.track.seek();
         },
         seekManual: function(event) {
             let seekPercentage = event.offsetX / event.target.clientWidth;
-            this.seekPosition = this.currentTrack.duration() * seekPercentage;
-            this.currentTrack.seek(this.seekPosition);
+            this.seekPosition = this.player.current.track.duration() * seekPercentage;
+            this.player.current.track.seek(this.seekPosition);
         },
         nextTrack: function() {
-            // handle repeat-all, repeat-one, and shuffle
-            if ((this.currentQueueItem + 1) >= this.playlist.length) {
-                // assume repeat-all for now
-                this.currentQueueItem = 0;
+            let nextPlaylistTrack = 0;
+            if (this.player.current.playlistTrack + 1 < this.playlists[this.player.current.playlist].tracklist.length) {
+                nextPlaylistTrack = this.player.current.playlistTrack + 1;
             } else {
-                this.currentQueueItem++;
+                // TODO: Update with stop mutation
+                this.player.isPlaying = false;
             }
+            this.setTrack({
+                track_id: this.playlists[this.player.current.playlist].tracklist[nextPlaylistTrack],
+                playlistTrack: nextPlaylistTrack,
+            });
         },
         prevTrack: function() {
-            // handle repeat-all, repeat-one, and shuffle
-            if ((this.currentQueueItem - 1) < 0) {
-                // assume repeat-all for now
-                this.currentQueueItem = this.playlist.length - 1;
-            } else {
-                this.currentQueueItem--;
+            let prevPlaylistTrack = 0;
+            if (this.player.current.playlistTrack - 1 >= 0) {
+                prevPlaylistTrack = this.player.current.playlistTrack - 1;
             }
+            this.setTrack({
+                track_id: this.playlists[this.player.current.playlist].tracklist[prevPlaylistTrack],
+                playlistTrack: prevPlaylistTrack,
+            });
         },
         stopClicked: function() {
-            this.isPlaying = false;
+            this.player.isPlaying = false;
             this.seekPosition = 0;
-            this.currentTrack.stop();
+            this.player.current.track.stop();
         },
         onTrackEnd: function() {
             this.nextTrack();
         },
         ...mapMutations({
-            setTrack: 'setPlayerCurrentTrack'
+            setTrack: 'setPlayerCurrentTrack',
+            controlsPlay: 'controlsPlay',
+            controlsPause: 'controlsPause'
         })
     },
     watch: {
         isPlaying: function () {
-            if (this.isPlaying) {
-                this.currentTrack.play();
+            if (this.player.isPlaying) {
+                this.player.current.track.play();
 
                 requestAnimationFrame(this.performAnimation);
             } else {
-                this.currentTrack.pause();
+                this.player.current.track.pause();
 
                 //stop the animation
                 cancelAnimationFrame(this.seekbarAnimRequest);
             }
         },
-        currentQueueItem: function() {
-            let isPlaying = this.isPlaying;
-            if (this.currentTrack && isPlaying) {
-                this.currentTrack.stop();
-            }
-            this.currentTrack = new Howl({
-                src: [this.playlist[this.currentQueueItem]],
-                onend: this.onTrackEnd
-            });
-            if (isPlaying) {
-                this.currentTrack.play();
-            }
-        }
-    },
-    mounted: function() {
-        // Setup the new Howl.
-        if (this.playlist.length) {
-            if (this.currentQueueItem == null) {
-                this.currentQueueItem = 0;
-            }
-            // this.currentTrack = new Howl({
-            //     src: [this.playlist[this.currentQueueItem]]
-            // });
-        } else {
-            // playlist is empty
-        }
+        // currentQueueItem: function() {
+        //     let isPlaying = this.player.isPlaying;
+        //     if (this.player.current.track && isPlaying) {
+        //         this.player.current.track.stop();
+        //     }
+        //     this.player.current.track = new Howl({
+        //         src: [this.playlist[this.currentQueueItem]],
+        //         onend: this.onTrackEnd
+        //     });
+        //     if (isPlaying) {
+        //         this.player.current.track.play();
+        //     }
+        // }
     }
 }
 </script>

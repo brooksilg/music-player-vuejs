@@ -15,7 +15,10 @@ import { mapState, mapMutations } from 'vuex';
 
 export default {
     name: 'Playlist',
-    props: ['playlist'],
+    props: [
+        'playlist',
+        'playlist_id'
+    ],
     data: function() {
         return {
             // data
@@ -30,8 +33,9 @@ export default {
         selectTrack: function(track_index) {
             this.setTrack({
                 track_id: this.playlist.tracklist[track_index],
-                playlist: this.playlist.id,
-                playlistTrack: track_index
+                playlist: this.playlist_id,
+                playlistTrack: track_index,
+                playNow: true
             });
         },
         getTrackTitle(track_id) {

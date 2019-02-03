@@ -21,6 +21,7 @@
                 <template>
                     <Playlist
                         v-bind:playlist="playlist"
+                        v-bind:playlist_id="playlist_id"
                     />
                 </template>
             </div>

@@ -14,8 +14,8 @@ export default new Vuex.Store({
 		player: {
 			current: {
 				track: null, // currently loaded/playing track - Howl instance
-				playlist: '01', // set to first (default) playlist
-				playlistTrack: null, // index of current track in current.playlist
+				playlist: 0, // set to first (default) playlist
+				playlistTrack: 0, // index of current track in current.playlist
 			},
 			preload: null, // pre-load next track for gapless playback support
 			isPlaying: false,
@@ -251,6 +251,11 @@ export default new Vuex.Store({
 	},
 	mutations: {
 		setPlayerCurrentTrack (state, payload) {
+			if (state.player.current.track) {
+				// stop (now) previous track
+				state.player.current.track.stop();
+			}
+
 			if (payload.track_id) {
 				state.player.current.track = new Howl({
 					src: state.library[payload.track_id].filepath,
@@ -272,6 +277,11 @@ export default new Vuex.Store({
 			if (payload.playlistTrack) {
 				state.player.current.playlistTrack = payload.playlistTrack;
 			}
+
+			if (payload.playNow || state.player.isPlaying) {
+				state.player.isPlaying = true;
+				state.player.current.track.play();
+			}
 		},
 		setPlayerPreloadTrack (state, payload) {
 			if (payload.track_id) {
@@ -279,6 +289,14 @@ export default new Vuex.Store({
 			} else {
 				console.error('Track ID required');
 			}
+		},
+		controlsPlay (state) {
+			state.player.isPlaying = true;
+			state.player.current.track.play();
+		},
+		controlsPause (state) {
+			state.player.isPlaying = false;
+			state.player.current.track.pause();
 		},
 		controlsNextTrack (state) {
 			// handle repeat-all, repeat-one, and shuffle
