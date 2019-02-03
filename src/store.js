@@ -329,8 +329,8 @@ export default new Vuex.Store({
 	},
 	getters: {
 		songDuration: state => {
-            if (state.player.currentTrack) {
-                return state.player.currentTrack.duration();
+            if (state.player.current.track) {
+                return state.player.current.track.duration();
             } else {
                 return 0
             }

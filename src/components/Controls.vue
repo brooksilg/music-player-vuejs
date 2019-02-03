@@ -14,14 +14,13 @@
         <button v-on:click="nextTrack">Next</button>
         <p>{{ secondsToHHMMSS(seekPosition) }} / {{ secondsToHHMMSS(songDuration) }}</p>
         <div
-            class="progress"
+            class="ui progress tiny"
             v-on:click="seekManual"
         >
             <div 
                 v-bind:style="{ width: seekPercentage + '%' }"
                 v-bind:aria-valuenow="seekPercentage"
-                class="progress-bar"
-                role="progressbar"
+                class="bar"
                 aria-valuemin="0"
                 aria-valuemax="100"
             ></div>
@@ -140,6 +139,9 @@ export default {
         //         this.player.current.track.play();
         //     }
         // }
+    },
+    mounted: function() {
+        requestAnimationFrame(this.performAnimation);
     }
 }
 </script>
@@ -162,5 +164,11 @@ button + button {
 .progress-bar {
     transition: none !important;
     pointer-events: none;
+}
+.ui.progress .bar {
+    pointer-events: none; /* seeking bug */
+    min-width: 0;
+    -webkit-transition: none;
+    transition: none;
 }
 </style>

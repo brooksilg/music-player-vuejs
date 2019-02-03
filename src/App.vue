@@ -15,6 +15,7 @@
 
 <script>
 import { Multipane, MultipaneResizer } from 'vue-multipane'
+import { mapState, mapMutations } from 'vuex'
 
 import Library from './components/Library.vue'
 import PlaylistPane from './components/PlaylistPane.vue'
@@ -29,6 +30,23 @@ export default {
     PlaylistPane,
     Controls,
   },
+  computed: {
+    ...mapState([
+        'player',
+        'playlists',
+        'library'
+    ]),
+  },
+  mounted: function() {
+    this.setTrack({
+        track_id: this.playlists[this.player.current.playlist].tracklist[this.player.current.playlistTrack],
+    });
+  },
+  methods: {
+    ...mapMutations({
+      setTrack: 'setPlayerCurrentTrack'
+    })
+  }
 }
 </script>
 <style lang="scss">
