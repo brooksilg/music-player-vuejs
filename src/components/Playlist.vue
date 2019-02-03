@@ -1,9 +1,15 @@
 <template>
-    <div class="playlist">
+    <div v-bind:class="{
+        playing: this.player.isPlaying,
+        playlist: true
+    }">
         <div
             v-for="(track_id, track_index) in this.playlist.tracklist"
             v-bind:key="track_index"
             v-on:click="selectTrack(track_index)"
+            v-bind:class="{
+                current: isCurrentPlaylistTrack(track_index)
+            }"
         >
             {{ getTrackTitle(track_id) }}
         </div>
@@ -27,6 +33,7 @@ export default {
     computed: {
         ...mapState([
             'library',
+            'player'
         ])
     },
     methods: {
@@ -45,6 +52,9 @@ export default {
                 return this.library[track_id].filepath;
             }
         },
+        isCurrentPlaylistTrack(track_index) {
+            return (this.player.current.playlistTrack == track_index) && (this.player.current.playlist == this.playlist_id);
+        },
         ...mapMutations({
             setTrack: 'setPlayerCurrentTrack'
         })
@@ -54,3 +64,14 @@ export default {
     }
 }
 </script>
+<style>
+.current {
+    background: #ccc;
+}
+.current:before{
+    content:'\2026 ';
+}
+.playing .current:before{
+    content:'\25b6 ';
+}
+</style>

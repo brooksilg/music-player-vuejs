@@ -270,11 +270,11 @@ export default new Vuex.Store({
 				console.error('Track ID required');
 			}
 
-			if (payload.playlist) {
+			if (payload.playlist != null) {
 				state.player.current.playlist = payload.playlist;
 			}
 
-			if (payload.playlistTrack) {
+			if (payload.playlistTrack != null) {
 				state.player.current.playlistTrack = payload.playlistTrack;
 			}
 
