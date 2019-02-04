@@ -156,14 +156,10 @@ button {
 button + button {
     margin-left: 2px;
 }
-.progress {
-    max-width: 400px;
-    margin: 0 auto;
+.ui.progress {
+    max-width: 90%;
+    margin: 0 auto !important;
     cursor: pointer;
-}
-.progress-bar {
-    transition: none !important;
-    pointer-events: none;
 }
 .ui.progress .bar {
     pointer-events: none; /* seeking bug */

@@ -15,7 +15,7 @@
         </div>
         <template v-for="(playlist, playlist_id) in this.playlists">
             <div v-bind:key="playlist_id"
-                v-if="isSelectedPlaylist(playlist_id)"
+                v-show="isSelectedPlaylist(playlist_id)"
                 class="ui bottom attached active tab segment"
             >
                 <template>
@@ -64,3 +64,10 @@ export default {
     ])
 }
 </script>
+
+<style>
+.ui.tabular.menu .item:not(.active):hover {
+    background: #f7f7f7;
+    border-radius: .28571429rem .28571429rem 0 0 !important;
+}   
+</style>
