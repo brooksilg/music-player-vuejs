@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {PlayerConst, UI} from './config/constants.js'
-import {Howl} from 'howler'
+import { PlayerConst, UI } from './config/constants.js'
+import { Howl } from 'howler'
 
 Vue.use(Vuex)
 
