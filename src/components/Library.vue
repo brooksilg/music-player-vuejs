@@ -3,12 +3,30 @@
 </template>
 
 <script>
+import { mapState, mapGetters, mapMutations } from 'vuex';
+
 export default {
     name: 'Library',
     data: function() {
         return {
-            // data
+            library_structured: []
         }
     },
+    computed: {
+        ...mapState([
+            'ui',
+            'library'
+        ])
+    },
+    methods: {
+        constructLibrary: function() {
+
+        }
+    },
+    watch: {
+        library: function() {
+
+        }
+    }
 }
 </script>

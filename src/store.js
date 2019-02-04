@@ -1,8 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { } from './config/mutation-types.js'
-import {Howl} from 'howler';
-import Player from './api/player.js'
+import {PlayerConst, UI} from './config/constants.js'
+import {Howl} from 'howler'
 
 Vue.use(Vuex)
 
@@ -10,6 +9,10 @@ export default new Vuex.Store({
 	state: {
 		ui: {
 			selectedPlaylist: 0,
+			library : {
+				sortBy : UI.SORTBY_ARTIST,
+				groupBy: UI.GROUPBY_ALBUM,
+			}
 		},
 		player: {
 			current: {
@@ -20,6 +23,7 @@ export default new Vuex.Store({
 			preload: null, // pre-load next track for gapless playback support
 			isPlaying: false,
 			usePreload: true,
+			loop: PlayerConst.LOOP_OFF,
 		},
 		playlists: [
 			{
@@ -267,7 +271,7 @@ export default new Vuex.Store({
 					// onend: this.onTrackEnd
 				});
 			} else {
-				console.error('Track ID required');
+				// console.error('Track ID required');
 			}
 
 			if (payload.playlist != null) {
@@ -287,7 +291,7 @@ export default new Vuex.Store({
 			if (payload.track_id) {
 				state.player.preload = state.library[payload.track_id]
 			} else {
-				console.error('Track ID required');
+				// console.error('Track ID required');
 			}
 		},
 		controlsPlay (state) {
