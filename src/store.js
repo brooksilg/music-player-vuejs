@@ -32,18 +32,6 @@ export default new Vuex.Store({
 				tracklist: [
 					'12gph7xe6p',
 					'kpvpf8wx0f',
-					'oyua3woaet',
-					'uqds9uih0r',
-					'w4k5m9woo4',
-					'mr7mcde5nh',
-					'kdcv9uw94f',
-					'3nzxj6v42f',
-					'4a0jxz2lmz',
-					'iekveo600k',
-					'nn4x9pmdv7',
-					'm4n71ndakx',
-					'blrqyko76c',
-					's8tdzxycb2',
 				],
 			},
 			{
@@ -326,6 +314,15 @@ export default new Vuex.Store({
 		},
 		setUICurrentPlaylist(state, payload) {
 			state.ui.selectedPlaylist = payload.playlist_id;
+		},
+		addTracksToPlaylist(state, payload) {
+			let tracks = payload.tracks;
+			let playlist = (typeof payload.playlist !== 'undefined') ? payload.playlist : state.ui.selectedPlaylist;
+			let position = (typeof payload.position !== 'undefined') ? payload.position : state.playlists[playlist].tracklist.length;
+			if (tracks && tracks.length != 0) {
+				console.log(position);
+				state.playlists[playlist].tracklist.splice(position, 0, ...tracks);
+			}
 		}
 	},
 	actions: {
