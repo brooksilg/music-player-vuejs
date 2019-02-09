@@ -2,7 +2,17 @@
     <div id="library">
         <h2>Library</h2>
         <div v-for="(track) in this.library_structured" v-bind:key="track">
-            {{ track.filepath }}
+            <template v-if="track.tags">
+                <div>
+                    <span>{{ track.tags.artist }}</span> - 
+                    <span>{{ track.tags.title }}</span>
+                </div>
+            </template>
+            <template v-else>
+                <div>
+                    {{ track.filepath }}
+                </div>
+            </template>
         </div>
     </div>
 </template>
