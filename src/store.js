@@ -248,32 +248,7 @@ export default new Vuex.Store({
 				state.player.current.track.stop();
 			}
 
-			if (payload.track_id) {
-				state.player.current.track = new Howl({
-					src: state.library[payload.track_id].filepath,
-					// onend: this.onTrackEnd
-				});
-			} else if (payload.filepath) {
-				state.player.current.track = new Howl({
-					src: payload.filepath,
-					// onend: this.onTrackEnd
-				});
-			} else {
-				// console.error('Track ID required');
-			}
-
-			if (payload.playlist != null) {
-				state.player.current.playlist = payload.playlist;
-			}
-
-			if (payload.playlistTrack != null) {
-				state.player.current.playlistTrack = payload.playlistTrack;
-			}
-
-			if (payload.playNow || state.player.isPlaying) {
-				state.player.isPlaying = true;
-				state.player.current.track.play();
-			}
+			
 		},
 		setPlayerPreloadTrack (state, payload) {
 			if (payload.track_id) {
@@ -323,10 +298,38 @@ export default new Vuex.Store({
 				console.log(position);
 				state.playlists[playlist].tracklist.splice(position, 0, ...tracks);
 			}
-		}
+		},
 	},
 	actions: {
-		
+		changeTrack ({ commit, state }, payload) {
+			if (payload.track_id) {
+				state.player.current.track = new Howl({
+					src: state.library[payload.track_id].filepath,
+					// onend: onTrackEndHelper
+				});
+			} else if (payload.filepath) {
+				state.player.current.track = new Howl({
+					src: payload.filepath,
+					// onend: onTrackEndHelper
+				});
+			} else {
+				// console.error('Track ID required');
+			}
+
+			if (payload.playlist != null) {
+				state.player.current.playlist = payload.playlist;
+			}
+
+			if (payload.playlistTrack != null) {
+				state.player.current.playlistTrack = payload.playlistTrack;
+			}
+
+			if (payload.playNow || state.player.isPlaying) {
+				state.player.isPlaying = true;
+				state.player.current.track.play();
+			}
+			commit('setPlayerCurrentTrack')
+		}
 	},
 	getters: {
 		songDuration: state => {
