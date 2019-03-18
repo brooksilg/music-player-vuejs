@@ -273,9 +273,9 @@ export default new Vuex.Store({
 
 				// set current
 				state.player.current.track = state.player.preload;
-				state.player.preload = setPlayerPreloadTrack(state, {
-					id: "asdf",
-				});
+				// state.player.preload = setPlayerPreloadTrack(state, {
+				// 	id: "asdf",
+				// });
 
 				// stop (now) previous track
 				playingTrack.stop();
@@ -295,7 +295,6 @@ export default new Vuex.Store({
 			let playlist = (typeof payload.playlist !== 'undefined') ? payload.playlist : state.ui.selectedPlaylist;
 			let position = (typeof payload.position !== 'undefined') ? payload.position : state.playlists[playlist].tracklist.length;
 			if (tracks && tracks.length != 0) {
-				console.log(position);
 				state.playlists[playlist].tracklist.splice(position, 0, ...tracks);
 			}
 		},
