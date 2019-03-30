@@ -243,13 +243,10 @@ export default new Vuex.Store({
 	},
 	mutations: {
 		setPlayerCurrentTrack (state, payload) {
-			console.log(payload);
 			if (state.player.current.track) {
 				// stop (now) previous track
 				state.player.current.track.stop();
 			}
-
-			
 		},
 		setPlayerPreloadTrack (state, payload) {
 			if (payload.track_id) {

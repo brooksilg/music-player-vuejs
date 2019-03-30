@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 export default {
     name: 'Playlist',
@@ -55,8 +55,8 @@ export default {
         isCurrentPlaylistTrack(track_index) {
             return (this.player.current.playlistTrack == track_index) && (this.player.current.playlist == this.playlist_id);
         },
-        ...mapMutations({
-            setTrack: 'setPlayerCurrentTrack'
+        ...mapActions({
+            setTrack: 'changeTrack'
         })
     },
     mounted: function() {

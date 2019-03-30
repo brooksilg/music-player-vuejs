@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from 'vuex';
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
 import {Howl} from 'howler';
 import timeFormatter from '../mixins/timeFormatter.js';
 
@@ -108,9 +108,12 @@ export default {
             this.nextTrack();
         },
         ...mapMutations({
-            setTrack: 'setPlayerCurrentTrack',
+            // setTrack: 'setPlayerCurrentTrack',
             controlsPlay: 'controlsPlay',
             controlsPause: 'controlsPause'
+        }),
+        ...mapActions({
+            setTrack: 'changeTrack',
         })
     },
     watch: {
