@@ -243,6 +243,7 @@ export default new Vuex.Store({
 	},
 	mutations: {
 		setPlayerCurrentTrack (state, payload) {
+			console.log(payload);
 			if (state.player.current.track) {
 				// stop (now) previous track
 				state.player.current.track.stop();
@@ -300,7 +301,8 @@ export default new Vuex.Store({
 		},
 	},
 	actions: {
-		changeTrack ({ commit, state }, payload) {
+		changeTrack ({ state, commit }, payload) {
+			console.log(payload);
 			if (payload.track_id) {
 				state.player.current.track = new Howl({
 					src: state.library[payload.track_id].filepath,

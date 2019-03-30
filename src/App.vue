@@ -15,7 +15,7 @@
 
 <script>
 import { Multipane, MultipaneResizer } from 'vue-multipane'
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 import Library from './components/Library.vue'
 import PlaylistPane from './components/PlaylistPane.vue'
@@ -44,8 +44,11 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setTrack: 'setPlayerCurrentTrack'
-    })
+      // setTrack: 'setPlayerCurrentTrack'
+    }),
+    ...mapActions({
+      setTrack: 'changeTrack'
+    }),
   }
 }
 </script>
