@@ -255,10 +255,6 @@ export default new Vuex.Store({
 				// console.error('Track ID required');
 			}
 		},
-		controlsPlay (state) {
-			state.player.isPlaying = true;
-			state.player.current.track.play();
-		},
 		controlsPause (state) {
 			state.player.isPlaying = false;
 			state.player.current.track.pause();
@@ -298,20 +294,18 @@ export default new Vuex.Store({
 		},
 	},
 	actions: {
-		changeTrack ({ state, commit }, payload) {
+		setCurrentTrack ({ state, commit }, payload) {
 			console.log(payload);
+
+			let trackSource = null;
 			if (payload.track_id) {
-				state.player.current.track = new Howl({
-					src: state.library[payload.track_id].filepath,
-					// onend: onTrackEndHelper
-				});
+				trackSource = state.library[payload.track_id].filepath;
+				
 			} else if (payload.filepath) {
-				state.player.current.track = new Howl({
-					src: payload.filepath,
-					// onend: onTrackEndHelper
-				});
+				trackSource = payload.filepath;
 			} else {
-				// console.error('Track ID required');
+				alert('Track ID required');
+				return;
 			}
 
 			if (payload.playlist != null) {
@@ -322,12 +316,33 @@ export default new Vuex.Store({
 				state.player.current.playlistTrack = payload.playlistTrack;
 			}
 
-			if (payload.playNow || state.player.isPlaying) {
-				state.player.isPlaying = true;
-				state.player.current.track.play();
+			if (trackSource) {
+
+			} else {
+
 			}
+			state.player.current.track = new Howl({
+				src: trackSource,
+				// onend: onTrackEndHelper
+				onload: () => {
+					if (payload.playNow || state.player.isPlaying) {
+						state.player.isPlaying = true;
+						state.player.current.track.play();
+					}
+				},
+				onloaderror: (soundID, errorMessage) => {
+
+				}
+			});
+
+			console.log("current track", state.player.current.track);
+
 			commit('setPlayerCurrentTrack')
-		}
+		},
+		trackPlay ({ state, commit, dispatch }) {
+			state.player.isPlaying = true;
+			state.player.current.track.play();
+		},
 	},
 	getters: {
 		songDuration: state => {

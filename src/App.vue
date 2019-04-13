@@ -47,7 +47,7 @@ export default {
       // setTrack: 'setPlayerCurrentTrack'
     }),
     ...mapActions({
-      setTrack: 'changeTrack'
+      setTrack: 'setCurrentTrack'
     }),
   }
 }

@@ -64,7 +64,7 @@ export default {
             if (this.player.isPlaying) {
                 this.controlsPause();
             } else {
-                this.controlsPlay();
+                this.trackPlay();
             }
         },
         performAnimation: function() {
@@ -109,11 +109,11 @@ export default {
         },
         ...mapMutations({
             // setTrack: 'setPlayerCurrentTrack',
-            controlsPlay: 'controlsPlay',
             controlsPause: 'controlsPause'
         }),
         ...mapActions({
-            setTrack: 'changeTrack',
+            setTrack: 'setCurrentTrack',
+            trackPlay: 'trackPlay',
         })
     },
     watch: {

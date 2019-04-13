@@ -56,7 +56,7 @@ export default {
             return (this.player.current.playlistTrack == track_index) && (this.player.current.playlist == this.playlist_id);
         },
         ...mapActions({
-            setTrack: 'changeTrack'
+            setTrack: 'setCurrentTrack'
         })
     },
     mounted: function() {
