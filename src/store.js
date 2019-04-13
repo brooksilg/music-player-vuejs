@@ -317,6 +317,7 @@ export default new Vuex.Store({
 			}
 
 			if (trackSource) {
+				commit('setPlayerCurrentTrack');
 				state.player.current.track = new Howl({
 					src: trackSource,
 					onend: () => { dispatch('handleTrackEnd') },
@@ -332,8 +333,6 @@ export default new Vuex.Store({
 				});
 	
 				console.log("current track", state.player.current.track);
-	
-				commit('setPlayerCurrentTrack');
 			} else {
 
 			}
