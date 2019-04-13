@@ -294,7 +294,7 @@ export default new Vuex.Store({
 		},
 	},
 	actions: {
-		setCurrentTrack ({ state, commit }, payload) {
+		setCurrentTrack ({ state, commit, dispatch }, payload) {
 			console.log(payload);
 
 			let trackSource = null;
@@ -317,27 +317,41 @@ export default new Vuex.Store({
 			}
 
 			if (trackSource) {
-
+				state.player.current.track = new Howl({
+					src: trackSource,
+					onend: () => { dispatch('handleTrackEnd') },
+					onload: () => {
+						if (payload.playNow || state.player.isPlaying) {
+							state.player.isPlaying = true;
+							state.player.current.track.play();
+						}
+					},
+					onloaderror: (soundID, errorMessage) => {
+						console.error('error loading file:', soundID, errorMessage);
+					}
+				});
+	
+				console.log("current track", state.player.current.track);
+	
+				commit('setPlayerCurrentTrack');
 			} else {
 
 			}
-			state.player.current.track = new Howl({
-				src: trackSource,
-				// onend: onTrackEndHelper
-				onload: () => {
-					if (payload.playNow || state.player.isPlaying) {
-						state.player.isPlaying = true;
-						state.player.current.track.play();
-					}
-				},
-				onloaderror: (soundID, errorMessage) => {
-
-				}
-			});
-
-			console.log("current track", state.player.current.track);
-
-			commit('setPlayerCurrentTrack')
+		},
+		handleTrackEnd ({state, commit, dispatch}) {
+			let nextPlaylistTrack = 0;
+            if (state.player.current.playlistTrack + 1 < state.playlists[state.player.current.playlist].tracklist.length) {
+                nextPlaylistTrack = state.player.current.playlistTrack + 1;
+            } else {
+                // TODO: Update with stop mutation
+                state.player.isPlaying = false;
+			}
+			
+			dispatch({
+				type: 'setCurrentTrack',
+				track_id: state.playlists[state.player.current.playlist].tracklist[nextPlaylistTrack],
+				playlistTrack: nextPlaylistTrack,
+			})
 		},
 		trackPlay ({ state, commit, dispatch }) {
 			state.player.isPlaying = true;
