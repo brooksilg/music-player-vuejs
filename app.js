@@ -12,16 +12,17 @@ if (process.env.NODE_ENV === 'DEV') {
   url = `file://${process.cwd()}/dist/index.html`
 }
 
-function traverseDir(dir) {
+function traverseDir(dir, filelist = []) {
   fs.readdirSync(dir).forEach(file => {
     let fullPath = path.join(dir, file);
     if (fs.lstatSync(fullPath).isDirectory()) {
-       console.log(fullPath);
-       traverseDir(fullPath);
+       traverseDir(fullPath, filelist);
      } else {
-       console.log(fullPath);
+       filelist.push(fullPath);
+       //callback(fullPath);
      }  
   });
+  return filelist;
 }
 
 app.on('ready', () => {
@@ -33,8 +34,7 @@ app.on('ready', () => {
     },
     (filepath) => {
       if (filepath) {
-        console.log(filepath);
-        traverseDir(filepath[0]);
+        console.log(traverseDir(filepath[0]));
       }
     }
   ))
