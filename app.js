@@ -7,6 +7,7 @@ const {
 } = require('electron');
 const fs = require('fs');
 const path = require('path');
+const mm = require('music-metadata');
 
 let url
 if (process.env.NODE_ENV === 'DEV') {
@@ -15,30 +16,50 @@ if (process.env.NODE_ENV === 'DEV') {
   url = `file://${process.cwd()}/dist/index.html`
 }
 
-function traverseDir(dir, filelist = []) {
+function parseFileList(fileList) {
+  const parsedFilePromises = fileList.map(filePath => {
+    return mm.parseFile(filePath, {native: true})
+    .then( metadata => {
+      return {
+        filepath: filePath,
+        tags: metadata.common
+      }
+    })
+    .catch( err => {
+      console.error(err.message);
+    });
+  })
+  return Promise.all(parsedFilePromises).then(parsedFileList => {
+    return parsedFileList
+  })
+}
+
+function traverseDir(dir, fileList = []) {
   fs.readdirSync(dir).forEach(file => {
     let fullPath = path.join(dir, file);
     if (fs.lstatSync(fullPath).isDirectory()) {
-       traverseDir(fullPath, filelist);
+      traverseDir(fullPath, fileList);
      } else {
-       filelist.push(fullPath);
-       //callback(fullPath);
+      fileList.push(fullPath)
      }  
   });
-  return filelist;
+
+  return parseFileList(fileList).then((value) => {
+    return value
+  })
 }
 
 ipcMain.on('choose-library-source-request', (event, arg) => {
-  let filelist = []
   dialog.showOpenDialog({
       title: "Choose library folder",
       properties: ['openDirectory']
     },
     (filepath) => {
       if (filepath) {
-        filelist = traverseDir(filepath[0])
+        traverseDir(filepath[0]).then(fileList => {
+          event.reply('choose-library-source-reply', fileList)
+        })
       }
-      event.reply('choose-library-source-reply', filelist)
     }
   )
 })

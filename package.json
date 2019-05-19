@@ -11,6 +11,7 @@
   "dependencies": {
     "electron": "^5.0.1",
     "howler": "^2.1.1",
+    "music-metadata": "^4.0.1",
     "vue": "^2.5.21",
     "vue-multipane": "^0.9.5",
     "vuex": "^3.0.1"
