@@ -1,9 +1,12 @@
 const electron = require('electron')
-const { dialog } = require('electron');
+const {
+  app,
+  BrowserWindow,
+  dialog,
+  ipcMain
+} = require('electron');
 const fs = require('fs');
 const path = require('path');
-const app = electron.app
-const BrowserWindow = electron.BrowserWindow
 
 let url
 if (process.env.NODE_ENV === 'DEV') {
@@ -25,8 +28,19 @@ function traverseDir(dir, filelist = []) {
   return filelist;
 }
 
+ipcMain.on('testEvent', (event, arg) => {
+  console.log('testEvent: ', arg)
+})
+
 app.on('ready', () => {
-  let window = new BrowserWindow({width: 1024, height: 768})
+  let window = new BrowserWindow({
+    width: 1024,
+    height: 768,
+    webPreferences: {
+      nodeIntegration: false,
+      preload: __dirname + '/preload.js'
+    }
+  })
   window.loadURL(url)
   // console.log(dialog.showOpenDialog({
   //     title: "Choose music directory",
