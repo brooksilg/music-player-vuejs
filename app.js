@@ -29,10 +29,10 @@ function traverseDir(dir, filelist = []) {
 }
 
 ipcMain.on('choose-library-source-request', (event, arg) => {
-  let filelist
+  let filelist = []
   dialog.showOpenDialog({
-      title: "Choose library source",
-      properties: ['openFile', 'openDirectory', 'multiSelections']
+      title: "Choose library folder",
+      properties: ['openDirectory']
     },
     (filepath) => {
       if (filepath) {
