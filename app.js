@@ -28,14 +28,14 @@ function traverseDir(dir, filelist = []) {
 app.on('ready', () => {
   let window = new BrowserWindow({width: 1024, height: 768})
   window.loadURL(url)
-  console.log(dialog.showOpenDialog({
-      title: "Choose music directory",
-      properties: ['openFile', 'openDirectory', 'multiSelections']
-    },
-    (filepath) => {
-      if (filepath) {
-        console.log(traverseDir(filepath[0]));
-      }
-    }
-  ))
+  // console.log(dialog.showOpenDialog({
+  //     title: "Choose music directory",
+  //     properties: ['openFile', 'openDirectory', 'multiSelections']
+  //   },
+  //   (filepath) => {
+  //     if (filepath) {
+  //       console.log(traverseDir(filepath[0]));
+  //     }
+  //   }
+  // ))
 })
