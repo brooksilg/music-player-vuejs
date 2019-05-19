@@ -1,2 +1,1 @@
-window.ipcRenderer = require('electron').ipcRenderer;
-console.log('PRELOAD SUCCESSFUL')
+window.ipcRenderer = require('electron').ipcRenderer

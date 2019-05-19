@@ -28,13 +28,24 @@ function traverseDir(dir, filelist = []) {
   return filelist;
 }
 
-ipcMain.on('testEvent', (event, arg) => {
-  console.log('testEvent: ', arg)
+ipcMain.on('choose-library-source-request', (event, arg) => {
+  let filelist
+  dialog.showOpenDialog({
+      title: "Choose library source",
+      properties: ['openFile', 'openDirectory', 'multiSelections']
+    },
+    (filepath) => {
+      if (filepath) {
+        filelist = traverseDir(filepath[0])
+      }
+      event.reply('choose-library-source-reply', filelist)
+    }
+  )
 })
 
 app.on('ready', () => {
   let window = new BrowserWindow({
-    width: 1024,
+    width: 1280,
     height: 768,
     webPreferences: {
       nodeIntegration: false,
@@ -42,14 +53,4 @@ app.on('ready', () => {
     }
   })
   window.loadURL(url)
-  // console.log(dialog.showOpenDialog({
-  //     title: "Choose music directory",
-  //     properties: ['openFile', 'openDirectory', 'multiSelections']
-  //   },
-  //   (filepath) => {
-  //     if (filepath) {
-  //       console.log(traverseDir(filepath[0]));
-  //     }
-  //   }
-  // ))
 })

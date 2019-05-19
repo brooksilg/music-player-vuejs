@@ -41,7 +41,6 @@ export default {
     this.setTrack({
         track_id: this.playlists[this.player.current.playlist].tracklist[this.player.current.playlistTrack],
     });
-    ipcRenderer.send('testEvent', 'hello')
   },
   methods: {
     ...mapMutations({
