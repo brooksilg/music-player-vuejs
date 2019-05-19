@@ -56,8 +56,14 @@ ipcMain.on('choose-library-source-request', (event, arg) => {
     },
     (filepath) => {
       if (filepath) {
+        event.reply('choose-library-source-reply', {
+          status: 'parsing'
+        })
         traverseDir(filepath[0]).then(fileList => {
-          event.reply('choose-library-source-reply', fileList)
+          event.reply('choose-library-source-reply', {
+            status: 'success',
+            data: fileList
+          })
         })
       }
     }

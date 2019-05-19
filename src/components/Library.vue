@@ -27,8 +27,14 @@ import { UI } from '../config/constants.js'
 
 const ipcRenderer = window.ipcRenderer
 
-ipcRenderer.on('choose-library-source-reply', (event, arg) => {
-    console.log(arg)
+ipcRenderer.on('choose-library-source-reply', (event, response) => {
+    if (response.status === 'parsing') {
+        console.log("Loading library metadata")
+    }
+    if (response.status === 'success') {
+        console.log("Library loaded")
+        console.log(response.data)
+    }
 })
 
 export default {
