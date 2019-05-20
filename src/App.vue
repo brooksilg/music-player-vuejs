@@ -39,9 +39,14 @@ export default {
     ]),
   },
   mounted: function() {
-    ipcRenderer.on('choose-library-source-reply', (event, arg) => {
-      console.log(arg)
-      this.setLibraryFileList(arg)
+    ipcRenderer.on('choose-library-source-reply', (event, response) => {
+      if (response.status === 'parsing') {
+        console.log("Loading library metadata")
+      }
+      if (response.status === 'success') {
+        console.log("Library loaded")
+        this.setLibraryFileList(response)
+      }
     })
     this.setTrack({
         track_id: this.playlists[this.player.current.playlist].tracklist[this.player.current.playlistTrack],
