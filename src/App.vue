@@ -45,7 +45,7 @@ export default {
       }
       if (response.status === 'success') {
         console.log("Library loaded")
-        this.setLibraryFileList(response)
+        this.setLibraryFileList(response.data)
       }
     })
     this.setTrack({
