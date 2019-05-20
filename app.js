@@ -40,7 +40,9 @@ function traverseDir(dir, fileList = []) {
     if (fs.lstatSync(fullPath).isDirectory()) {
       traverseDir(fullPath, fileList);
      } else {
-      fileList.push(fullPath)
+      if (path.extname(fullPath).toLowerCase() === '.mp3') {
+        fileList.push(fullPath)        
+      }
      }  
   });
 

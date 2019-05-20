@@ -2,7 +2,7 @@
     <div id="library">
         <div class="header">
             <h2>Library</h2>
-            <button v-on:click="chooseLibraryFolder">Source</button>
+            <button v-on:click="onClickLibrarySource">Source</button>
         </div>
         <div v-for="(track) in this.library_structured" v-bind:key="track.id">
             <div>
@@ -22,14 +22,8 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from 'vuex';
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
 import { UI } from '../config/constants.js'
-
-const ipcRenderer = window.ipcRenderer
-
-ipcRenderer.on('choose-library-source-reply', (event, arg) => {
-    console.log(arg)
-})
 
 export default {
     name: 'Library',
@@ -57,16 +51,19 @@ export default {
                 tracks: [track.id],
             });
         },
-        chooseLibraryFolder: function() {
-            ipcRenderer.send('choose-library-source-request')
+        onClickLibrarySource: function() {
+            this.setLibraryDirectory()
         },
         ...mapMutations({
             addTracksToPlaylist: 'addTracksToPlaylist',
+        }),
+        ...mapActions({
+            setLibraryDirectory: 'setLibraryDirectory',
         })
     },
     watch: {
         library: function() {
-
+            this.constructLibrary()
         }
     },
     mounted: function() {

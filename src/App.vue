@@ -20,6 +20,7 @@ import { mapState, mapMutations, mapActions } from 'vuex'
 import Library from './components/Library.vue'
 import PlaylistPane from './components/PlaylistPane.vue'
 import Controls from './components/Controls.vue'
+const ipcRenderer = window.ipcRenderer
 
 export default {
   name: 'app',
@@ -38,16 +39,21 @@ export default {
     ]),
   },
   mounted: function() {
+    ipcRenderer.on('choose-library-source-reply', (event, arg) => {
+      console.log(arg)
+      this.setLibraryFileList(arg)
+    })
     this.setTrack({
         track_id: this.playlists[this.player.current.playlist].tracklist[this.player.current.playlistTrack],
     });
   },
   methods: {
     ...mapMutations({
-      // setTrack: 'setPlayerCurrentTrack'
+      // setTrack: 'setPlayerCurrentTrack',
+      setLibraryFileList: 'setLibraryFileList'
     }),
     ...mapActions({
-      setTrack: 'setCurrentTrack'
+      setTrack: 'setCurrentTrack',
     }),
   }
 }

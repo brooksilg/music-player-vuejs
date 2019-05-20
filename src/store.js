@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { PlayerConst, UI } from './config/constants.js'
 import { Howl } from 'howler'
+import uniqid from 'uniqid'
+const ipcRenderer = window.ipcRenderer
 
 Vue.use(Vuex)
 
@@ -30,8 +32,6 @@ export default new Vuex.Store({
 				id: "00",
 				name: "Default",
 				tracklist: [
-					'12gph7xe6p',
-					'kpvpf8wx0f',
 				],
 			},
 			{
@@ -114,6 +114,15 @@ export default new Vuex.Store({
 				state.playlists[playlist].tracklist.splice(position, 0, ...tracks);
 			}
 		},
+		setLibraryFileList(state, payload) {
+			console.log(payload)
+			let newLibrary = payload.reduce((map, libraryItem) => {
+				map[uniqid()] = libraryItem
+				return map
+			}, {})
+			console.log(newLibrary)
+			state.library = newLibrary
+		}
 	},
 	actions: {
 		setCurrentTrack ({ state, commit, dispatch }, payload) {
@@ -178,6 +187,9 @@ export default new Vuex.Store({
 			state.player.isPlaying = true;
 			state.player.current.track.play();
 		},
+		setLibraryDirectory({state, commit, dispatch}) {
+			ipcRenderer.send('choose-library-source-request')
+		}
 	},
 	getters: {
 		songDuration: state => {
