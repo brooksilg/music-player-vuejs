@@ -130,9 +130,13 @@ export default new Vuex.Store({
 
 			let trackSource = null;
 			if (payload.track_id) {
+				ipcRenderer.send('file-from-path-request', {
+					filepath: state.library[payload.track_id].filepath
+				});
 				trackSource = state.library[payload.track_id].filepath;
 				
 			} else if (payload.filepath) {
+				console.log(payload.filepath)
 				trackSource = payload.filepath;
 			} else {
 				alert('Track ID required');
@@ -151,6 +155,7 @@ export default new Vuex.Store({
 				commit('setPlayerCurrentTrack');
 				state.player.current.track = new Howl({
 					src: trackSource,
+					format: 'mp3',
 					onend: () => { dispatch('handleTrackEnd') },
 					onload: () => {
 						if (payload.playNow || state.player.isPlaying) {

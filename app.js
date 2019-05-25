@@ -72,6 +72,18 @@ ipcMain.on('choose-library-source-request', (event, arg) => {
   )
 })
 
+ipcMain.on('file-from-path-request', (event, arg) => {
+  fs.readFile(arg.filepath, function(err, buffer) {
+    var arrByte= Uint8Array.from(Buffer.from(buffer))
+    console.log(arrByte)
+    // var binaryData= new Blob([arrByte])
+    event.reply('file-from-path-reply', {
+      status: 'success',
+      blob: arrByte
+    })
+  })
+})
+
 app.on('ready', () => {
   let window = new BrowserWindow({
     width: 1280,
