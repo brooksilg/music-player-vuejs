@@ -48,16 +48,6 @@ export default {
         this.setLibraryFileList(response.data)
       }
     })
-    ipcRenderer.on('file-from-path-reply', (event, response) => {
-      if (response.status === 'success') {
-        var blob = new Blob([response.blob])
-        console.log(response.blob)
-        console.log(URL.createObjectURL(blob))
-        this.setTrack({
-          filepath: URL.createObjectURL(blob),
-      });
-      }
-    })
     this.setTrack({
         track_id: this.playlists[this.player.current.playlist].tracklist[this.player.current.playlistTrack],
     });
