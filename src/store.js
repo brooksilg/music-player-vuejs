@@ -215,15 +215,17 @@ export default new Vuex.Store({
 			state.player.isPlaying = true;
 			state.player.current.track.play();
 		},
-		setLibraryDirectory({state, commit, dispatch}) {
+		setLibraryDirectory({dispatch}) {
 			ipcRenderer.send('choose-library-source-request')
-			ipcRenderer.once('choose-library-source-reply', (event, response) => {
-				if (response.status === 'parsing') {
+			ipcRenderer.on('choose-library-source-reply', (event, response) => {
+				if (response.status && response.status === 'parsing') {
 					console.log("Loading library metadata")
-				}
-				if (response.status === 'success') {
-					console.log("Library loaded")
-					this.setLibraryFileList(response.data)
+				} else {
+					if (response.status && response.status === 'success') {
+						console.log("Library loaded")
+						dispatch('setLibraryFileList', response.data)
+					}
+					ipcRenderer.removeAllListeners('choose-library-source-reply')
 				}
 			})
 		}
