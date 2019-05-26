@@ -150,7 +150,7 @@ export default new Vuex.Store({
 					var blob = new Blob([response.blob])
 					dispatch('setCurrentTrack', { 
 						filepath: URL.createObjectURL(blob)
-					 })
+					})
 				}
 			})
 		},
@@ -217,6 +217,15 @@ export default new Vuex.Store({
 		},
 		setLibraryDirectory({state, commit, dispatch}) {
 			ipcRenderer.send('choose-library-source-request')
+			ipcRenderer.once('choose-library-source-reply', (event, response) => {
+				if (response.status === 'parsing') {
+					console.log("Loading library metadata")
+				}
+				if (response.status === 'success') {
+					console.log("Library loaded")
+					this.setLibraryFileList(response.data)
+				}
+			})
 		}
 	},
 	getters: {
