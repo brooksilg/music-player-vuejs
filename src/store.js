@@ -215,7 +215,7 @@ export default new Vuex.Store({
 			state.player.isPlaying = true;
 			state.player.current.track.play();
 		},
-		setLibraryDirectory({dispatch}) {
+		setLibraryDirectory({commit}) {
 			ipcRenderer.send('choose-library-source-request')
 			ipcRenderer.on('choose-library-source-reply', (event, response) => {
 				if (response.status && response.status === 'parsing') {
@@ -223,7 +223,7 @@ export default new Vuex.Store({
 				} else {
 					if (response.status && response.status === 'success') {
 						console.log("Library loaded")
-						dispatch('setLibraryFileList', response.data)
+						commit('setLibraryFileList', response.data)
 					}
 					ipcRenderer.removeAllListeners('choose-library-source-reply')
 				}
