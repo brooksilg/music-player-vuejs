@@ -223,6 +223,7 @@ export default new Vuex.Store({
 				} else {
 					if (response.status && response.status === 'success') {
 						console.log("Library loaded")
+						console.log(response.data)
 						commit('setLibraryFileList', response.data)
 					}
 					ipcRenderer.removeAllListeners('choose-library-source-reply')
