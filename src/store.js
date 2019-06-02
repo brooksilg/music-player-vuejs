@@ -81,28 +81,6 @@ export default new Vuex.Store({
 			state.player.isPlaying = false;
 			state.player.current.track.pause();
 		},
-		controlsNextTrack (state) {
-			// handle repeat-all, repeat-one, and shuffle
-			if (state.usePreload && state.player.preload) {
-				let playingTrack = state.player.current.track;
-				state.player.preload.play();
-				
-				// set current
-				state.player.current.track = state.player.preload;
-				// state.player.preload = setPlayerPreloadTrack(state, {
-				// 	id: "asdf",
-				// });
-				
-				// stop (now) previous track
-				playingTrack.stop();
-			}
-			// if ((state.queue.currentTrack + 1) >= this.playlist.length) {
-			// 	// assume repeat-all for now
-			// 	this.currentQueueItem = 0;
-			// } else {
-			// 	this.currentQueueItem++;
-			// }
-		},
 		setUICurrentPlaylist(state, payload) {
 			state.ui.selectedPlaylist = payload.playlist_id;
 		},
@@ -129,7 +107,7 @@ export default new Vuex.Store({
 			state.player.preload = new Howl({
 				src: trackSource,
 				format: 'mp3',
-				onend: () => { dispatch('handleTrackEnd') },
+				onend: () => { dispatch('nextTrack') },
 				onload: () => {
 					if (payload.playNow || state.player.isPlaying) {
 						state.player.isPlaying = true;
@@ -148,7 +126,8 @@ export default new Vuex.Store({
 			ipcRenderer.once('file-from-path-reply', (event, response) => {
 				if (response.status === 'success') {
 					var blob = new Blob([response.blob])
-					dispatch('setCurrentTrack', { 
+					dispatch('setCurrentTrack', {
+						...payload,
 						filepath: URL.createObjectURL(blob)
 					})
 				}
@@ -156,11 +135,11 @@ export default new Vuex.Store({
 		},
 		setCurrentTrack ({ state, commit, dispatch }, payload) {
 			let trackSource = null;
-			if (payload.track_id) {
-				dispatch('createURLFromFile', { track_id : payload.track_id })
-				return
-			} else if (payload.filepath) {
+			if (payload.filepath) {
 				trackSource = payload.filepath
+			} else if (payload.track_id) {
+				dispatch('createURLFromFile', payload )
+				return
 			} else {
 				alert('Track ID required')
 				return
@@ -179,7 +158,7 @@ export default new Vuex.Store({
 				state.player.current.track = new Howl({
 					src: trackSource,
 					format: 'mp3',
-					onend: () => { dispatch('handleTrackEnd') },
+					onend: () => { dispatch('nextTrack') },
 					onload: () => {
 						if (payload.playNow || state.player.isPlaying) {
 							state.player.isPlaying = true;
@@ -196,12 +175,15 @@ export default new Vuex.Store({
 				
 			}
 		},
-		handleTrackEnd ({state, commit, dispatch}) {
+		nextTrack ({state, commit, dispatch}) {
+			// TODO: handle repeat-all, repeat-one, and shuffle
+			
 			let nextPlaylistTrack = 0;
 			if (state.player.current.playlistTrack + 1 < state.playlists[state.player.current.playlist].tracklist.length) {
 				nextPlaylistTrack = state.player.current.playlistTrack + 1;
 			} else {
 				// TODO: Update with stop mutation
+				// TODO: stop only if repeat-all is off
 				state.player.isPlaying = false;
 			}
 			

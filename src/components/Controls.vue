@@ -76,19 +76,6 @@ export default {
             this.seekPosition = this.player.current.track.duration() * seekPercentage;
             this.player.current.track.seek(this.seekPosition);
         },
-        nextTrack: function() {
-            let nextPlaylistTrack = 0;
-            if (this.player.current.playlistTrack + 1 < this.playlists[this.player.current.playlist].tracklist.length) {
-                nextPlaylistTrack = this.player.current.playlistTrack + 1;
-            } else {
-                // TODO: Update with stop mutation
-                this.player.isPlaying = false;
-            }
-            this.setTrack({
-                track_id: this.playlists[this.player.current.playlist].tracklist[nextPlaylistTrack],
-                playlistTrack: nextPlaylistTrack,
-            });
-        },
         prevTrack: function() {
             let prevPlaylistTrack = 0;
             if (this.player.current.playlistTrack - 1 >= 0) {
@@ -104,9 +91,6 @@ export default {
             this.seekPosition = 0;
             this.player.current.track.stop();
         },
-        onTrackEnd: function() {
-            this.nextTrack();
-        },
         ...mapMutations({
             // setTrack: 'setPlayerCurrentTrack',
             controlsPause: 'controlsPause'
@@ -114,6 +98,7 @@ export default {
         ...mapActions({
             setTrack: 'setCurrentTrack',
             trackPlay: 'trackPlay',
+            nextTrack: 'nextTrack'
         })
     },
     watch: {
