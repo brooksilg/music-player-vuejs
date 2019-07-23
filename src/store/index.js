@@ -1,0 +1,172 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+import state from './state.js'
+import { PlayerConst, UI } from './config/constants.js'
+import { Howl } from 'howler'
+import uniqid from 'uniqid'
+const ipcRenderer = window.ipcRenderer
+
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+	state,
+	mutations: {
+		setPlayerCurrentTrack (state, payload) {
+			if (state.player.current.track) {
+				// stop (now) previous track
+				state.player.current.track.stop();
+			}
+		},
+		setPlayerPreloadTrack (state, payload) {
+			if (payload.track_id) {
+				state.player.preload = state.library[payload.track_id]
+			} else {
+				// console.error('Track ID required');
+			}
+		},
+		controlsPause (state) {
+			state.player.isPlaying = false;
+			state.player.current.track.pause();
+		},
+		setUICurrentPlaylist(state, payload) {
+			state.ui.selectedPlaylist = payload.playlist_id;
+		},
+		addTracksToPlaylist(state, payload) {
+			let tracks = payload.tracks;
+			let playlist = (typeof payload.playlist !== 'undefined') ? payload.playlist : state.ui.selectedPlaylist;
+			let position = (typeof payload.position !== 'undefined') ? payload.position : state.playlists[playlist].tracklist.length;
+			if (tracks && tracks.length != 0) {
+				state.playlists[playlist].tracklist.splice(position, 0, ...tracks);
+			}
+		},
+		setLibraryFileList(state, payload) {
+			console.log(payload)
+			let newLibrary = payload.reduce((map, libraryItem) => {
+				map[uniqid()] = libraryItem
+				return map
+			}, {})
+			console.log(newLibrary)
+			state.library = newLibrary
+		}
+	},
+	actions: {
+		preloadNextTrack ({state, commit, dispatch}, payload) {
+			state.player.preload = new Howl({
+				src: trackSource,
+				format: 'mp3',
+				onend: () => { dispatch('nextTrack') },
+				onload: () => {
+					if (payload.playNow || state.player.isPlaying) {
+						state.player.isPlaying = true;
+						state.player.current.track.play();
+					}
+				},
+				onloaderror: (soundID, errorMessage) => {
+					console.error('error loading file:', soundID, errorMessage);
+				}
+			});
+		},
+		createURLFromFile ({state, commit, dispatch}, payload) {
+			ipcRenderer.send('file-from-path-request', {
+				filepath: state.library[payload.track_id].filepath
+			});
+			ipcRenderer.once('file-from-path-reply', (event, response) => {
+				if (response.status === 'success') {
+					var blob = new Blob([response.blob])
+					dispatch('setCurrentTrack', {
+						...payload,
+						filepath: URL.createObjectURL(blob)
+					})
+				}
+			})
+		},
+		setCurrentTrack ({ state, commit, dispatch }, payload) {
+			let trackSource = null;
+			if (payload.filepath) {
+				trackSource = payload.filepath
+			} else if (payload.track_id) {
+				dispatch('createURLFromFile', payload )
+				return
+			} else {
+				alert('Track ID required')
+				return
+			}
+			
+			if (payload.playlist != null) {
+				state.player.current.playlist = payload.playlist;
+			}
+			
+			if (payload.playlistTrack != null) {
+				state.player.current.playlistTrack = payload.playlistTrack;
+			}
+			
+			if (trackSource) {
+				commit('setPlayerCurrentTrack');
+				state.player.current.track = new Howl({
+					src: trackSource,
+					format: 'mp3',
+					onend: () => { dispatch('nextTrack') },
+					onload: () => {
+						if (payload.playNow || state.player.isPlaying) {
+							state.player.isPlaying = true;
+							state.player.current.track.play();
+						}
+					},
+					onloaderror: (soundID, errorMessage) => {
+						console.error('error loading file:', soundID, errorMessage);
+					}
+				});
+				
+				console.log("current track", state.player.current.track);
+			} else {
+				
+			}
+		},
+		nextTrack ({state, commit, dispatch}) {
+			// TODO: handle repeat-all, repeat-one, and shuffle
+			
+			let nextPlaylistTrack = 0;
+			if (state.player.current.playlistTrack + 1 < state.playlists[state.player.current.playlist].tracklist.length) {
+				nextPlaylistTrack = state.player.current.playlistTrack + 1;
+			} else {
+				// TODO: Update with stop mutation
+				// TODO: stop only if repeat-all is off
+				state.player.isPlaying = false;
+			}
+			
+			dispatch({
+				type: 'setCurrentTrack',
+				track_id: state.playlists[state.player.current.playlist].tracklist[nextPlaylistTrack],
+				playlistTrack: nextPlaylistTrack,
+			})
+		},
+		trackPlay ({ state, commit, dispatch }) {
+			state.player.isPlaying = true;
+			state.player.current.track.play();
+		},
+		setLibraryDirectory({commit}) {
+			ipcRenderer.send('choose-library-source-request')
+			ipcRenderer.on('choose-library-source-reply', (event, response) => {
+				if (response.status && response.status === 'parsing') {
+					console.log("Loading library metadata")
+				} else {
+					if (response.status && response.status === 'success') {
+						console.log("Library loaded")
+						console.log(response.data)
+						commit('setLibraryFileList', response.data)
+					}
+					ipcRenderer.removeAllListeners('choose-library-source-reply')
+				}
+			})
+		}
+	},
+	getters: {
+		songDuration: state => {
+			if (state.player.current.track) {
+				return state.player.current.track.duration();
+			} else {
+				return 0
+			}
+		},
+	}
+})
